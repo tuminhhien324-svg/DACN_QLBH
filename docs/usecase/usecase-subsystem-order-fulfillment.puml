@@ -1,0 +1,80 @@
+@startuml usecase-subsystem-order-fulfillment
+title PHÂN HỆ 2: TIẾP NHẬN & XỬ LÝ ĐƠN HÀNG (HP STORE)
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI, Arial, sans-serif"
+skinparam defaultFontSize 12
+
+skinparam actor {
+    BackgroundColor #FFF0F5
+    BorderColor #8B0000
+    FontColor #8B0000
+    FontStyle bold
+}
+
+skinparam usecase {
+    BackgroundColor #FDF0ED
+    BorderColor #E76F51
+    ArrowColor #8B0000
+    FontColor #264653
+}
+
+actor "Khách hàng\n(Customer)" as KhachHang
+actor "Nhân viên\n(Staff)" as NhanVien
+actor "Quản lý chi nhánh\n(Branch Manager)" as QuanLyChiNhanh
+actor "Quản lý tổng\n(General Manager)" as QuanLyTong
+
+' Kế thừa vai trò
+NhanVien <|-- QuanLyChiNhanh
+QuanLyChiNhanh <|-- QuanLyTong
+
+rectangle "Phân Hệ Xử Lý Đơn Hàng & Giao Vận (HP STORE)" {
+
+    package "Tra Cứu & Điều Phối Đơn Hàng" {
+        usecase "UC201: Xem danh sách đơn hàng" as UC201
+        usecase "UC202: Xem chi tiết đơn hàng" as UC202
+        usecase "UC208: Lọc đơn theo Chi nhánh & Trạng thái" as UC208
+    }
+
+    package "Cập Nhật Trạng Thái & Giao Vận" {
+        usecase "UC203: Cập nhật trạng thái đơn\n(Chờ xử lý -> Đang giao -> Hoàn tất)" as UC203
+        usecase "UC204: Cập nhật trạng thái hàng loạt\n(Bulk Update)" as UC204
+        usecase "UC205: In phiếu giao hàng vận chuyển\n(phieugiaohang)" as UC205
+    }
+
+    package "Hủy Đơn & Hoàn Tồn Kho" {
+        usecase "UC206: Hủy đơn hàng" as UC206
+        usecase "UC207: Tự động hoàn lại tồn kho\n(Restock tonkho)" as UC207
+    }
+}
+
+' ========================================================
+' TƯƠNG TÁC VỚI ACTOR
+' ========================================================
+KhachHang --> UC206 : Yêu cầu hủy\n(khi còn Chờ xử lý)
+
+NhanVien --> UC201
+NhanVien --> UC203
+NhanVien --> UC206
+
+QuanLyChiNhanh --> UC204
+QuanLyChiNhanh --> UC208
+
+' ========================================================
+' QUAN HỆ <<include>> (BẮT BUỘC)
+' ========================================================
+UC206 ..> UC207 : <<include>>\n(Hoàn trả số lượng vào kho xuất)
+
+' ========================================================
+' QUAN HỆ <<extend>> (MỞ RỘNG CÓ ĐIỀU KIỆN)
+' ========================================================
+UC202 .> UC201 : <<extend>>\n(Khi click chọn 1 mã đơn)
+UC208 .> UC201 : <<extend>>\n(Khi áp dụng bộ lọc)
+UC204 .> UC203 : <<extend>>\n(Khi chọn nhiều checkbox)
+UC205 .> UC203 : <<extend>>\n(Khi chuyển sang 'Đang giao')
+
+@enduml

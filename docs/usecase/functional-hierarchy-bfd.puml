@@ -1,0 +1,73 @@
+@startwbs functional-hierarchy-bfd
+title SƠ ĐỒ PHÂN CẤP CHỨC NĂNG (BFD - CẤP 0, 1, 2) — HP STORE
+
+<style>
+wbsDiagram {
+  LineColor #2B2D42
+  node {
+    Padding 8
+    Margin 5
+    RoundCorner 8
+    BackgroundColor #FFFFFF
+    BorderColor #2B2D42
+    FontName "Segoe UI, Arial, sans-serif"
+    FontSize 12
+  }
+  :depth(0) {
+    BackgroundColor #D90429
+    FontColor #FFFFFF
+    FontStyle bold
+    FontSize 14
+    RoundCorner 12
+  }
+  :depth(1) {
+    BackgroundColor #2B2D42
+    FontColor #FFFFFF
+    FontStyle bold
+    FontSize 12
+    RoundCorner 10
+  }
+  :depth(2) {
+    BackgroundColor #EDF2F4
+    FontColor #1F2421
+    FontSize 11
+  }
+}
+</style>
+
+* CẤP 0: HỆ THỐNG QUẢN LÝ BÁN HÀNG & CHUỖI CỬA HÀNG HP STORE
+** 1.0 Phân Hệ Mua Sắm & Bán Hàng\n(Actor: Khách hàng, Nhân viên)
+*** 1.1 Tìm kiếm, Lọc danh mục & Soi ảnh 5 góc
+*** 1.2 Quản lý Giỏ hàng trực tuyến
+*** 1.3 Đặt hàng & Nhập địa chỉ giao (Checkout)
+*** 1.4 Xử lý Thanh toán COD / VNPAY QR
+*** 1.5 Tiếp nhận & Cập nhật trạng thái đơn (Nhân viên)
+*** 1.6 Tra cứu hành trình & Hủy đơn hàng (Khách hàng)
+** 2.0 Phân Hệ Sản Phẩm & Danh Mục\n(Actor: Quản lý tổng)
+*** 2.1 Quản lý Danh mục hàng hóa (danhmuc)
+*** 2.2 Thêm, sửa, cập nhật thông tin Sản phẩm (sanpham)
+*** 2.3 Thiết lập Giá niêm yết & Giá khuyến mãi
+*** 2.4 Quản lý thông tin Nhà cung cấp (nhacungcap)
+** 3.0 Phân Hệ Quản Lý Kho Đa Chi Nhánh\n(Actor: Quản lý chi nhánh, Quản lý tổng)
+*** 3.1 Quản lý Tồn kho tức thời theo Chi nhánh (tonkho)
+*** 3.2 Lập phiếu Nhập kho hàng hóa (loaiGD = 1)
+*** 3.3 Lập phiếu Xuất kho bán lẻ (loaiGD = 2)
+*** 3.4 Yêu cầu & Phê duyệt Điều chuyển kho liên chi nhánh
+*** 3.5 Tra cứu Lịch sử Giao dịch thẻ kho (giaodichkho)
+*** 3.6 Cảnh báo Hàng tồn kho tối thiểu (Tồn <= 5 SP)
+** 4.0 Phân Hệ Khách Hàng & Hội Viên\n(Actor: Khách hàng, Nhân viên)
+*** 4.1 Đăng ký, Đăng nhập & Xác thực OTP
+*** 4.2 Cập nhật Hồ sơ cá nhân & Sổ địa chỉ
+*** 4.3 Tích lũy điểm & Nâng hạng HP VIP Member
+*** 4.4 Đổi điểm nhận Voucher khuyến mãi
+** 5.0 Phân Hệ Quản Trị Chi Nhánh & Nhân Sự\n(Actor: Quản lý chi nhánh, Quản lý tổng)
+*** 5.1 Quản lý Danh sách Chi nhánh cửa hàng (Quản lý tổng)
+*** 5.2 Quản lý Hồ sơ Nhân viên theo Chi nhánh
+*** 5.3 Phân quyền tài khoản RBAC (Staff, Manager, Admin)
+*** 5.4 Khóa / Mở khóa tài khoản nhân sự
+** 6.0 Phân Hệ Báo Cáo & Thống Kê Kinh Doanh\n(Actor: Quản lý chi nhánh, Quản lý tổng)
+*** 6.1 Báo cáo Doanh thu & Đơn hàng theo từng Chi nhánh
+*** 6.2 Báo cáo Tổng hợp Doanh thu toàn chuỗi (Quản lý tổng)
+*** 6.3 Thống kê Top Sản phẩm bán chạy nhất
+*** 6.4 Thống kê Tỷ lệ Đơn hàng (Hoàn tất, Đang giao, Đã hủy)
+@endwbs

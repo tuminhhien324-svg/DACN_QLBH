@@ -1,0 +1,86 @@
+@startuml usecase-subsystem-warehouse-multibranch
+title PHÂN HỆ 3: QUẢN LÝ KHO ĐA CHI NHÁNH & SỔ CÁI THẺ KHO (HP STORE)
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI, Arial, sans-serif"
+skinparam defaultFontSize 12
+
+skinparam actor {
+    BackgroundColor #FEFAE0
+    BorderColor #BC6C25
+    FontColor #606C38
+    FontStyle bold
+}
+
+skinparam usecase {
+    BackgroundColor #FAEDCD
+    BorderColor #D4A373
+    ArrowColor #BC6C25
+    FontColor #283618
+}
+
+actor "Quản lý chi nhánh\n(Branch Manager)" as QuanLyChiNhanh
+actor "Quản lý tổng\n(General Manager)" as QuanLyTong
+
+' Kế thừa vai trò
+QuanLyChiNhanh <|-- QuanLyTong : Toàn quyền chuỗi
+
+rectangle "Phân Hệ Quản Lý Kho Đa Chi Nhánh (HP STORE)" {
+
+    package "Nghiệp Vụ Nhập / Xuất Kho" {
+        usecase "UC301: Xem tồn kho khả dụng tại chi nhánh" as UC301
+        usecase "UC302: Thực hiện Nhập kho hàng hóa\n(loaiGD = 1: Nhập hàng)" as UC302
+        usecase "UC303: Thực hiện Xuất kho bán lẻ\n(loaiGD = 2: Xuất hàng)" as UC303
+        usecase "UC310: Kiểm tra tồn khả dụng\n(soluongton >= soluongxuat)" as UC310
+    }
+
+    package "Điều Chuyển Kho Liên Chi Nhánh" {
+        usecase "UC304: Lập đề xuất điều chuyển kho" as UC304
+        usecase "UC305: Phê duyệt lệnh điều chuyển kho\n(Chỉ Quản lý tổng)" as UC305
+    }
+
+    package "Sổ Cái Thẻ Kho & Cảnh Báo" {
+        usecase "UC306: Tra cứu lịch sử thẻ kho\n(giaodichkho toàn chuỗi)" as UC306
+        usecase "UC307: Lọc thẻ kho theo sản phẩm" as UC307
+        usecase "UC308: Ghi sổ cái biến động kho\n(Ledger: tontruoc, tonsau)" as UC308
+        usecase "UC309: Cập nhật số dư bảng tonkho" as UC309
+        usecase "UC311: Cảnh báo hàng tồn kho tối thiểu\n(Tồn kho <= 5 SP)" as UC311
+    }
+}
+
+' ========================================================
+' TƯƠNG TÁC VỚI ACTOR
+' ========================================================
+QuanLyChiNhanh --> UC301
+QuanLyChiNhanh --> UC302
+QuanLyChiNhanh --> UC303
+QuanLyChiNhanh --> UC304
+QuanLyChiNhanh --> UC306
+
+QuanLyTong --> UC305
+QuanLyTong --> UC306
+
+' ========================================================
+' QUAN HỆ <<include>> (BẮT BUỘC)
+' ========================================================
+UC302 ..> UC308 : <<include>>
+UC302 ..> UC309 : <<include>>
+
+UC303 ..> UC310 : <<include>>
+UC303 ..> UC308 : <<include>>
+UC303 ..> UC309 : <<include>>
+
+UC305 ..> UC308 : <<include>>
+UC305 ..> UC309 : <<include>>
+
+' ========================================================
+' QUAN HỆ <<extend>> (MỞ RỘNG CÓ ĐIỀU KIỆN)
+' ========================================================
+UC307 .> UC306 : <<extend>>\n(Khi lọc theo 1 mã SP cụ thể)
+UC311 .> UC309 : <<extend>>\n(Khi số dư sau cập nhật <= 5 SP)
+
+@enduml

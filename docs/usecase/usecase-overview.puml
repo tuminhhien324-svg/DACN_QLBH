@@ -1,0 +1,139 @@
+@startuml usecase-overview
+title SƠ ĐỒ USE CASE TỔNG QUAN HỆ THỐNG — HP STORE (MÔ HÌNH 4 ACTOR)
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 10
+skinparam defaultFontName "Segoe UI, Arial, sans-serif"
+skinparam defaultFontSize 12
+
+skinparam actor {
+    BackgroundColor #F8F9FA
+    BorderColor #2B2D42
+    FontColor #1F2421
+    FontStyle bold
+}
+
+skinparam usecase {
+    BackgroundColor #EDF2F4
+    BorderColor #2B2D42
+    ArrowColor #2B2D42
+    FontColor #2B2D42
+}
+
+skinparam package {
+    BackgroundColor #FFFFFF
+    BorderColor #8D99AE
+    FontColor #2B2D42
+    FontStyle bold
+}
+
+' ========================================================
+' ĐỊNH NGHĨA 4 ACTORS VÀ QUAN HỆ KẾ THỪA VAI TRÒ
+' ========================================================
+actor "1. Khách hàng\n(Customer)" as KhachHang
+actor "2. Nhân viên\n(Staff)" as NhanVien
+actor "3. Quản lý chi nhánh\n(Branch Manager)" as QuanLyChiNhanh
+actor "4. Quản lý tổng\n(General Manager / Admin)" as QuanLyTong
+
+' Hệ thống phụ trợ ngoài
+actor "Cổng VNPAY QR\n(Ngân hàng)" as VNPAY <<System>>
+
+' Quan hệ kế thừa quyền hạn giữa các Actor nội bộ
+NhanVien <|-- QuanLyChiNhanh : Kế thừa quyền
+QuanLyChiNhanh <|-- QuanLyTong : Kế thừa quyền
+
+' ========================================================
+' RANH GIỚI HỆ THỐNG (SYSTEM BOUNDARY)
+' ========================================================
+rectangle "HỆ THỐNG QUẢN LÝ BÁN HÀNG & CHUỖI CỬA HÀNG HP STORE" {
+
+    ' PHÂN HỆ 1: MUA SẮM & BÁN HÀNG
+    package "1.0 Phân Hệ Mua Sắm & Bán Hàng" {
+        usecase "UC01: Tìm kiếm & Xem ảnh 5 góc" as UC_Browse
+        usecase "UC02: Quản lý giỏ hàng trực tuyến" as UC_Cart
+        usecase "UC03: Đặt hàng & Thanh toán (Checkout)" as UC_Checkout
+        usecase "UC04: Bán hàng & Tạo đơn tại quầy" as UC_PosOrder
+        usecase "UC05: Tra cứu lịch sử đơn hàng" as UC_OrderHistory
+        usecase "UC06: Hủy đơn hàng (Chờ xử lý)" as UC_CancelOrder
+    }
+
+    ' PHÂN HỆ 2: XỬ LÝ ĐƠN HÀNG & GIAO VẬN
+    package "2.0 Phân Hệ Xử Lý Đơn Hàng" {
+        usecase "UC07: Tra cứu tồn kho tức thời tại chi nhánh" as UC_StockLookup
+        usecase "UC08: Tiếp nhận & Cập nhật trạng thái đơn" as UC_ProcessOrder
+        usecase "UC09: In phiếu vận chuyển giao hàng" as UC_PrintShipment
+    }
+
+    ' PHÂN HỆ 3: QUẢN LÝ KHO ĐA CHI NHÁNH
+    package "3.0 Phân Hệ Quản Lý Kho Đa Chi Nhánh" {
+        usecase "UC10: Quản lý tồn kho chi nhánh" as UC_BranchStock
+        usecase "UC11: Lập phiếu Nhập/Xuất kho nội bộ" as UC_StockInOut
+        usecase "UC12: Đề xuất điều chuyển hàng liên kho" as UC_TransferRequest
+        usecase "UC13: Phê duyệt lệnh điều chuyển kho" as UC_ApproveTransfer
+        usecase "UC14: Tra cứu thẻ kho (giaodichkho)" as UC_StockLedger
+    }
+
+    ' PHÂN HỆ 4: KHÁCH HÀNG & HỘI VIÊN HP MEMBER
+    package "4.0 Phân Hệ Khách Hàng & HP Member" {
+        usecase "UC15: Đăng ký, Đăng nhập & Quản lý hồ sơ" as UC_AuthProfile
+        usecase "UC16: Tích lũy điểm & Nâng hạng VIP" as UC_LoyaltyPoints
+        usecase "UC17: Đổi điểm nhận Voucher giảm giá" as UC_RedeemVoucher
+    }
+
+    ' PHÂN HỆ 5: QUẢN TRỊ CHI NHÁNH & NHÂN SỰ
+    package "5.0 Phân Hệ Quản Trị Chi Nhánh & Nhân Sự" {
+        usecase "UC18: Quản lý danh mục & Bảng giá sản phẩm" as UC_ManageCatalog
+        usecase "UC19: Quản lý Nhà cung cấp" as UC_ManageSuppliers
+        usecase "UC20: Quản lý Hệ thống Chi nhánh cửa hàng" as UC_ManageBranches
+        usecase "UC21: Quản lý Nhân sự & Phân quyền RBAC" as UC_ManageStaff
+    }
+
+    ' PHÂN HỆ 6: BÁO CÁO & THỐNG KÊ KINH DOANH
+    package "6.0 Phân Hệ Báo Cáo & Thống Kê" {
+        usecase "UC22: Báo cáo doanh thu theo chi nhánh" as UC_BranchReport
+        usecase "UC23: Báo cáo tổng thể doanh thu toàn chuỗi" as UC_ChainReport
+        usecase "UC24: Thống kê Top bán chạy & Tỷ lệ hoàn tất" as UC_ProductAnalytics
+    }
+}
+
+' ========================================================
+' LIÊN KẾT GIỮA 4 ACTORS VÀ CÁC USE CASE
+' ========================================================
+
+' 1. KHÁCH HÀNG
+KhachHang --> UC_Browse
+KhachHang --> UC_Cart
+KhachHang --> UC_Checkout
+KhachHang --> UC_OrderHistory
+KhachHang --> UC_CancelOrder
+KhachHang --> UC_AuthProfile
+KhachHang --> UC_LoyaltyPoints
+KhachHang --> UC_RedeemVoucher
+UC_Checkout ..> VNPAY : <<interact>>
+
+' 2. NHÂN VIÊN
+NhanVien --> UC_StockLookup
+NhanVien --> UC_PosOrder
+NhanVien --> UC_ProcessOrder
+NhanVien --> UC_PrintShipment
+
+' 3. QUẢN LÝ CHI NHÁNH (Kế thừa Nhân viên + thêm quyền quản lý kho & báo cáo CN)
+QuanLyChiNhanh --> UC_BranchStock
+QuanLyChiNhanh --> UC_StockInOut
+QuanLyChiNhanh --> UC_TransferRequest
+QuanLyChiNhanh --> UC_StockLedger
+QuanLyChiNhanh --> UC_BranchReport
+
+' 4. QUẢN LÝ TỔNG (Kế thừa Quản lý CN + toàn quyền chuỗi)
+QuanLyTong --> UC_ApproveTransfer
+QuanLyTong --> UC_ManageCatalog
+QuanLyTong --> UC_ManageSuppliers
+QuanLyTong --> UC_ManageBranches
+QuanLyTong --> UC_ManageStaff
+QuanLyTong --> UC_ChainReport
+QuanLyTong --> UC_ProductAnalytics
+
+@enduml

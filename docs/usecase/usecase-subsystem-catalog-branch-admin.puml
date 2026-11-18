@@ -1,0 +1,89 @@
+@startuml usecase-subsystem-catalog-branch-admin
+title PHÂN HỆ QUẢN TRỊ: SẢN PHẨM, CHI NHÁNH, NHÂN SỰ & BÁO CÁO THỐNG KÊ (HP STORE)
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI, Arial, sans-serif"
+skinparam defaultFontSize 12
+
+skinparam actor {
+    BackgroundColor #F0EBF4
+    BorderColor #5B2C6F
+    FontColor #5B2C6F
+    FontStyle bold
+}
+
+skinparam usecase {
+    BackgroundColor #F4ECF7
+    BorderColor #A569BD
+    ArrowColor #5B2C6F
+    FontColor #4A235A
+}
+
+actor "Quản lý chi nhánh\n(Branch Manager)" as QuanLyChiNhanh
+actor "Quản lý tổng\n(General Manager)" as QuanLyTong
+
+' Kế thừa vai trò
+QuanLyChiNhanh <|-- QuanLyTong : Toàn quyền chuỗi
+
+rectangle "Phân Hệ Quản Trị Hệ Thống Chuỗi HP STORE" {
+
+    package "1. Quản Lý Danh Mục, Sản Phẩm & Nhà Cung Cấp" {
+        usecase "UC401: Quản lý danh mục hàng hóa\n(danhmuc)" as UC401
+        usecase "UC402: Thêm mới sản phẩm\n(sanpham)" as UC402
+        usecase "UC403: Chỉnh sửa sản phẩm & Bảng giá" as UC403
+        usecase "UC404: Tải ảnh 5 góc chụp lên Cloudinary" as UC404
+        usecase "UC405: Quản lý đối tác Nhà cung cấp\n(nhacungcap)" as UC405
+    }
+
+    package "2. Quản Trị Hệ Thống Chi Nhánh & Phân Quyền Nhân Sự" {
+        usecase "UC406: Quản lý danh sách Chi nhánh & Kho\n(chinhanh, khohang)" as UC406
+        usecase "UC407: Quản lý hồ sơ nhân viên" as UC407
+        usecase "UC408: Phân quyền vai trò RBAC\n(vaitro: Staff, Manager, Admin)" as UC408
+        usecase "UC409: Khóa / Mở khóa tài khoản nhân sự" as UC409
+    }
+
+    package "3. Báo Cáo Doanh Thu & Phân Tích Kinh Doanh" {
+        usecase "UC410: Báo cáo doanh thu theo chi nhánh" as UC410
+        usecase "UC411: Báo cáo tổng thể chuỗi toàn quốc\n(Doanh thu, Lợi nhuận, Tồn kho)" as UC411
+        usecase "UC412: Xuất dữ liệu báo cáo (Excel / PDF)" as UC412
+    }
+}
+
+' ========================================================
+' TƯƠNG TÁC VỚI ACTOR
+' ========================================================
+
+' Quản lý chi nhánh (Quyền hạn phạm vi chi nhánh)
+QuanLyChiNhanh --> UC407 : Quản lý nhân viên CN
+QuanLyChiNhanh --> UC410 : Xem báo cáo CN
+
+' Quản lý tổng (Toàn quyền hệ thống)
+QuanLyTong --> UC401
+QuanLyTong --> UC402
+QuanLyTong --> UC403
+QuanLyTong --> UC405
+QuanLyTong --> UC406
+QuanLyTong --> UC407
+QuanLyTong --> UC408
+QuanLyTong --> UC410
+QuanLyTong --> UC411
+
+' ========================================================
+' QUAN HỆ <<include>> (BẮT BUỘC)
+' ========================================================
+UC402 ..> UC404 : <<include>>\n(Upload ảnh góc chụp)
+
+' ========================================================
+' QUAN HỆ <<extend>> (MỞ RỘNG CÓ ĐIỀU KIỆN)
+' ========================================================
+UC404 .> UC403 : <<extend>>\n(Khi cập nhật thay ảnh mới)
+UC408 .> UC407 : <<extend>>\n(Chỉ Quản lý tổng điều phối vai trò)
+UC409 .> UC407 : <<extend>>\n(Khi vô hiệu hóa tài khoản)
+UC412 .> UC410 : <<extend>>\n(Khi nhấn nút xuất file)
+UC412 .> UC411 : <<extend>>\n(Khi nhấn nút xuất file)
+
+@enduml

@@ -1,0 +1,97 @@
+@startuml usecase-subsystem-sales-checkout
+title PHÂN HỆ 1: MUA SẮM, ĐẶT HÀNG & THANH TOÁN (HP STORE)
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI, Arial, sans-serif"
+skinparam defaultFontSize 12
+
+skinparam actor {
+    BackgroundColor #E8F4F8
+    BorderColor #1A535C
+    FontColor #1A535C
+    FontStyle bold
+}
+
+skinparam usecase {
+    BackgroundColor #F7FFF7
+    BorderColor #4ECDC4
+    ArrowColor #1A535C
+    FontColor #292F36
+}
+
+actor "Khách hàng\n(Customer)" as KhachHang
+actor "Nhân viên\n(Staff)" as NhanVien
+actor "Cổng VNPAY QR\n(Ngân hàng)" as VNPAY <<System>>
+
+rectangle "Phân Hệ Bán Hàng & Đặt Hàng (HP STORE)" {
+
+    ' Nhóm Duyệt hàng & Giỏ hàng
+    package "1. Mua Sắm & Giỏ Hàng" {
+        usecase "UC101: Tìm kiếm & Lọc sản phẩm" as UC101
+        usecase "UC102: Xem chi tiết & Soi ảnh 5 góc" as UC102
+        usecase "UC103: Quản lý giỏ hàng trực tuyến" as UC103
+    }
+
+    ' Nhóm Đặt hàng & Thanh toán
+    package "2. Quy Trình Đặt Hàng & Thanh Toán" {
+        usecase "UC104: Đặt hàng trực tuyến (Checkout)" as UC104
+        usecase "UC105: Bán hàng & Lập đơn tại quầy" as UC105
+        usecase "UC106: Kiểm tra tồn kho chi nhánh\n(SELECT FOR UPDATE)" as UC106
+        usecase "UC107: Lưu chi tiết đơn hàng\n(chitiet_donhang)" as UC107
+        usecase "UC108: Khởi tạo phiếu giao hàng\n(phieugiaohang)" as UC108
+        usecase "UC109: Ghi nhận thanh toán\n(thanhtoan)" as UC109
+        usecase "UC110: Áp dụng điểm thưởng HP Member" as UC110
+        usecase "UC111: Thanh toán qua VNPAY QR" as UC111
+        usecase "UC112: Thanh toán COD (Tiền mặt)" as UC112
+    }
+
+    ' Nhóm Sau bán & Hủy đơn
+    package "3. Theo Dõi & Hủy Đơn" {
+        usecase "UC113: Tra cứu lịch sử & Hành trình đơn" as UC113
+        usecase "UC114: Hủy đơn hàng (Chờ xử lý)" as UC114
+        usecase "UC115: Tự động hoàn lại tồn kho\n(Restock tonkho)" as UC115
+    }
+}
+
+' ========================================================
+' TƯƠNG TÁC VỚI ACTOR
+' ========================================================
+KhachHang --> UC101
+KhachHang --> UC103
+KhachHang --> UC104
+KhachHang --> UC113
+KhachHang --> UC114
+
+NhanVien --> UC101
+NhanVien --> UC105
+
+UC111 --- VNPAY
+
+' ========================================================
+' QUAN HỆ <<include>> (BẮT BUỘC)
+' ========================================================
+UC104 ..> UC106 : <<include>>
+UC104 ..> UC107 : <<include>>
+UC104 ..> UC108 : <<include>>
+UC104 ..> UC109 : <<include>>
+
+UC105 ..> UC106 : <<include>>
+UC105 ..> UC107 : <<include>>
+UC105 ..> UC109 : <<include>>
+
+UC114 ..> UC115 : <<include>>
+
+' ========================================================
+' QUAN HỆ <<extend>> (TÙY CHỌN & ĐIỀU KIỆN KÍCH HOẠT)
+' ========================================================
+UC102 .> UC101 : <<extend>>\n(Khi khách click xem SP)
+
+UC110 .> UC104 : <<extend>>\n(Khi tích lũy >= 75 điểm)
+UC111 .> UC104 : <<extend>>\n(Khi chọn VNPAY QR)
+UC112 .> UC104 : <<extend>>\n(Khi chọn COD)
+
+@enduml
